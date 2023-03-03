@@ -68,11 +68,27 @@ const genres = [
 
 //Your endpoints go here
 
-app.get("/api/v1/tunes", (req, res) => {
+const API = "/api"
+const V1 = "/v1/"
+
+app.get(API + V1 + "tunes", (req, res) => {
+  //TODO Bæta við query selection
+  const { name } = req.query
+
+  if (name) {
+    const ret = []
+    tunes.forEach( (tune) => {
+      if (tune.name.toLowerCase().includes(name.toLowerCase())) {
+        ret.push(tune)
+      }
+    })
+    return res.status(200).json(ret)
+  }
   res.status(200).json(tunes);
 });
 
-app.get("/api/v1/tunes/:tuneId", (req, res) => {
+
+app.get(API + V1 + "tunes/:tuneId", (req, res) => {
   tunes.forEach((tune) => {
     if (tune.id == req.params.tuneId) {
       res.status(200).json(tune);
@@ -82,30 +98,31 @@ app.get("/api/v1/tunes/:tuneId", (req, res) => {
   res.status(404).send("Tune not found");
 });
 
-app.post("/api/v1/tunes", (req, res) => {
+
+app.post(API + V1 + "tunes", (req, res) => {
   res.status(200).send("create new tune!");
 });
 
-app.patch("/api/v1/tunes/:tuneId", (req, res) => {
+app.patch(API + V1 + "tunes/:tuneId", (req, res) => {
   res.status(200).send("update part of tune " + req.params.tuneId);
 });
 
-app.get("/api/v1/genres", (req, res) => {
+app.get(API + V1 + "genres", (req, res) => {
   //TODO create
   res.status(200).json(genres);
 });
 
-app.post("/api/v1/genres", (req, res) => {
+app.post(API + V1 + "genres", (req, res) => {
   //TODO create
   res.status(200).send("create new genre");
 });
 
-app.delete("/api/v1/genres/:genreId", (req, res) => {
+app.delete(API + V1 + "genres/:genreId", (req, res) => {
   //TODO create
   res.status(200).send("Delete genre");
 });
 
-app.get("/api/v1/genres/:genreId/tunes/:tuneId", (req, res) => {
+app.get(API + V1 + "genres/:genreId/tunes/:tuneId", (req, res) => {
   //TODO create
   res
     .status(200)
@@ -123,9 +140,9 @@ app.get("/api/v1/genres/:genreId/tunes/:tuneId", (req, res) => {
 });
 
 // Allt annað
-/* app.use('*', (req, res) => {
+app.use('*', (req, res) => {
   res.status(405).send('Operation not supported.')
-}); */
+});
 
 //Start the server
 app.listen(port, () => {
