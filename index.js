@@ -68,42 +68,80 @@ const genres = [
 
 //Your endpoints go here
 
-const API = "/api"
-const V1 = "/v1/"
+const API = "/api";
+const V1 = "/v1/";
+let tuneID = 2;
+let genreID = 2;
 
+// Finised
 app.get(API + V1 + "tunes", (req, res) => {
   //TODO Bæta við query selection
-  const { name } = req.query
+  const { name } = req.query;
 
   if (name) {
-    const ret = []
-    tunes.forEach( (tune) => {
+    const ret = [];
+    tunes.forEach((tune) => {
       if (tune.name.toLowerCase().includes(name.toLowerCase())) {
-        ret.push(tune)
+        ret.push(tune);
       }
-    })
-    return res.status(200).json(ret)
+    });
+    return res.status(200).json(ret);
   }
   res.status(200).json(tunes);
 });
 
-
+// Finished
 app.get(API + V1 + "tunes/:tuneId", (req, res) => {
+  const { tuneId } = req.params;
+  let ret;
+
   tunes.forEach((tune) => {
-    if (tune.id == req.params.tuneId) {
-      res.status(200).json(tune);
-      return;
+    if (tune.id == tuneId) {
+      ret = tune;
     }
   });
-  res.status(404).send("Tune not found");
+
+  if (ret) {
+    return res.status(200).json(ret);
+  } else {
+    res.status(404).send("Tune not found");
+  }
 });
 
 
-app.post(API + V1 + "tunes", (req, res) => {
-  res.status(200).send("create new tune!");
+// Held að þessi sé klár
+app.post(API + V1 + "tunes/:genreId", (req, res) => {
+
+  //TODO samkvæmt lýsingu á time breytan fyrir nótuna að vera INT
+
+  const genId = req.params.genreId
+  const { name, content } = req.body
+
+  if (!name || !content || !content.length) {
+
+    return res.status(400).send("Name and none empty content are required!")
+  }
+
+  if (!(genres.some(genre => genre.id == genId))) {
+    return res.status(404).send("Genre does not exist")
+  }
+
+  tunes.push({
+    id: tuneID.toString(),
+    name: name,
+    genreId: genId,
+    content: content
+  })
+ 
+  
+  tuneID++
+
+  res.status(200).json(tunes.at(-1));
 });
 
 app.patch(API + V1 + "tunes/:tuneId", (req, res) => {
+
+
   res.status(200).send("update part of tune " + req.params.tuneId);
 });
 
@@ -140,8 +178,8 @@ app.get(API + V1 + "genres/:genreId/tunes/:tuneId", (req, res) => {
 });
 
 // Allt annað
-app.use('*', (req, res) => {
-  res.status(405).send('Operation not supported.')
+app.use("*", (req, res) => {
+  res.status(405).send("Operation not supported.");
 });
 
 //Start the server
