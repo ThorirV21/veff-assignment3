@@ -113,17 +113,17 @@ app.get(API + V1 + "genres", (req, res) => {
 });
 
 app.post(API + V1 + "genres", (req, res) => {
-  //TODO create
+  //TODO create new genre
   res.status(200).send("create new genre");
 });
 
 app.delete(API + V1 + "genres/:genreId", (req, res) => {
-  //TODO create
+  //TODO delet genre if empty
   res.status(200).send("Delete genre");
 });
 
 app.get(API + V1 + "genres/:genreId/tunes/:tuneId", (req, res) => {
-  //TODO create
+  //TODO get something
   res
     .status(200)
     .send(
