@@ -1,6 +1,5 @@
 //Sample for Assignment 3
 const express = require("express");
-
 //Import a body parser module to be able to access the request body as json
 const bodyParser = require("body-parser");
 
@@ -73,24 +72,38 @@ const V1 = "/v1/";
 let tuneID = 2;
 let genreID = 2;
 
-// Finised
+// Búinn / þarf að fara yfir
+//TODO Yfirfara og prófa
 app.get(API + V1 + "tunes", (req, res) => {
-  //TODO Bæta við query selection
   const { name } = req.query;
+  const display = tunes.map(({ id, name, genreId }) => ({ id, name, genreId }));
+  let genId;
 
   if (name) {
+    genres.forEach((genre) => {
+      if (genre.genreName.toLowerCase() == name.toLowerCase()) {
+        genId = genre.id;
+      }
+    });
     const ret = [];
-    tunes.forEach((tune) => {
-      if (tune.name.toLowerCase().includes(name.toLowerCase())) {
+
+    if (!genId) {
+      return res.status(200).json(ret);
+    }
+
+    display.forEach((tune) => {
+      if (tune.genreId == genId) {
         ret.push(tune);
       }
     });
     return res.status(200).json(ret);
   }
-  res.status(200).json(tunes);
+
+  res.status(200).json(display);
 });
 
 // Finished
+//TODO Yfirfara og prófa
 app.get(API + V1 + "tunes/:tuneId", (req, res) => {
   const { tuneId } = req.params;
   let ret;
@@ -108,43 +121,82 @@ app.get(API + V1 + "tunes/:tuneId", (req, res) => {
   }
 });
 
-
 // Held að þessi sé klár
+//TODO Yfirfara og prófa
 app.post(API + V1 + "tunes/:genreId", (req, res) => {
-
   //TODO samkvæmt lýsingu á time breytan fyrir nótuna að vera INT
 
-  const genId = req.params.genreId
-  const { name, content } = req.body
+  const genId = req.params.genreId;
+  const { name, content } = req.body;
 
   if (!name || !content || !content.length) {
-
-    return res.status(400).send("Name and none empty content are required!")
+    return res
+      .status(400)
+      .send("Message: Name and none empty content are required in the body");
   }
 
-  if (!(genres.some(genre => genre.id == genId))) {
-    return res.status(404).send("Genre does not exist")
+  if (!genres.some((genre) => genre.id == genId)) {
+    return res.status(404).send("Genre does not exist");
   }
 
   tunes.push({
     id: tuneID.toString(),
     name: name,
     genreId: genId,
-    content: content
-  })
- 
-  
-  tuneID++
+    content: content,
+  });
+
+  tuneID++;
 
   res.status(200).json(tunes.at(-1));
 });
 
-app.patch(API + V1 + "tunes/:tuneId", (req, res) => {
 
+
+//TODO Yfirfara og prófa
+// breyta öllu nema genre
+app.patch(API + V1 + "tunes/:tId/", (req, res) => {
+  const { name, content } = req.body;
+  const { tuneId } = req.params;
+
+  let tuneIndex;
+
+  tunes.forEach((tune) => {
+    if (tune.id == tuneId) {
+      tuneIndex = tunes.indexOf(tune);
+    }
+  });
+
+  if (tuneIndex === undefined) {
+    return res.status(404).send("Message: Tune not found");
+  }
+
+  const current = tunes[tuneIndex];
+
+  if (!name && !content) {
+    return res.status(200).json(tunes[tuneIndex]);
+  }
+
+  if (name) {
+    current.name = name;
+  }
+  if (content && content.length > 0) {
+    current.content = content;
+  }
+
+  tunes[tuneIndex] = current;
+
+  res.status(200).json(tunes[tuneIndex]);
+});
+
+app.patch(API + V1 + "tunes/:tuneId/:genreId", (req, res) => {
+  const { name, genreId, content } = req.body;
+  const { tuneId, genId } = req.params;
 
   res.status(200).send("update part of tune " + req.params.tuneId);
 });
 
+//TODO Yfirfara og prófa
 app.get(API + V1 + "genres", (req, res) => {
   //TODO create
   res.status(200).json(genres);
