@@ -152,7 +152,6 @@ app.post(API + V1 + "tunes/:genreId", (req, res) => {
 });
 
 
-
 //TODO Yfirfara og prófa
 // breyta öllu nema genre
 app.patch(API + V1 + "tunes/:tId/", (req, res) => {
