@@ -151,7 +151,6 @@ app.post(API + V1 + "tunes/:genreId", (req, res) => {
   res.status(200).json(tunes.at(-1));
 });
 
-
 //TODO Yfirfara og prófa
 // breyta öllu nema genre
 app.patch(API + V1 + "tunes/:tId/", (req, res) => {
@@ -188,6 +187,8 @@ app.patch(API + V1 + "tunes/:tId/", (req, res) => {
   res.status(200).json(tunes[tuneIndex]);
 });
 
+//TODO eftir að gera, spurning hvort hægt sé að búa til function sem hægt er að nota í þessu falli og fallinu fyrir ofan
+
 app.patch(API + V1 + "tunes/:tuneId/:genreId", (req, res) => {
   const { name, genreId, content } = req.body;
   const { tuneId, genId } = req.params;
@@ -201,32 +202,57 @@ app.get(API + V1 + "genres", (req, res) => {
   res.status(200).json(genres);
 });
 
+
+//TODO Yfirfara og prófa
 app.post(API + V1 + "genres", (req, res) => {
   //TODO create new genre
-  res.status(200).send("create new genre");
+  const { genreName } = req.body;
+
+  if (!genreName) {
+    return res.status(400).send("Message: genreName is required in the body.");
+  }
+
+  genres.forEach((genre) => {
+    if (genre.genreName === genreName) {
+      return res.status(400).send("Message: Genre already exists.");
+    }
+  });
+
+  genres.push({
+    id: genreID.toString(),
+    genreName: genreName,
+  });
+  genreID++
+
+  res.status(201).json(genres.at(-1));
 });
 
+//TODO eftir að klára
 app.delete(API + V1 + "genres/:genreId", (req, res) => {
   //TODO delet genre if empty
+
+
   res.status(200).send("Delete genre");
 });
 
-app.get(API + V1 + "genres/:genreId/tunes/:tuneId", (req, res) => {
-  //TODO get something
-  res
-    .status(200)
-    .send(
-      "Get tune with id " +
-        req.params.tuneId +
-        " from genre with id " +
-        req.params.genreId
-    );
 
-  tunes.forEach((tune) => {
-    if (req.params.genreId == tune.id) {
-    }
-  });
+// Endapunktar miðað við framenda
+
+//TODO eftir að klára
+app.get(API + V1 + "genres/:genreId/tunes/:tuneId", (req, res) => {
+
+  res.status(200).send("Do something")
 });
+
+
+app.post(API + V1 + "genres/:genreId/tunes", (req, res) => {
+  //TODO get something
+  res.status(200).send("create")
+});
+
+
+
+
 
 // Allt annað
 app.use("*", (req, res) => {
