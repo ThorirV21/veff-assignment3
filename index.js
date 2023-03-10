@@ -230,25 +230,25 @@ app.post(API + V1 + "genres", (req, res) => {
 app.delete(API + V1 + "genres/:genreId", (req, res) => {
   //TODO delet genre if empty
 
-  const { genID } = req.params;
+  const { genreId } = req.params;
 
   let del = false;
   tunes.forEach((tune) => {
-    if (tune.genreId == genID) {
+    if (tune.genreId == genreId) {
       del = true;
     }
   });
-  
-  const pos = genres.map(e => e.id).indexOf(genID)
 
-  console.log()
+  const pos = genres.map((e) => e.id).indexOf(toString(genreId));
+
 
   if (!del) {
-    return res.status(400).json({message: "Genre " + genres[pos].genreName + " has tunes. Not deleted!"})
+    return res.status(400).json({
+      message: "Genre " + genres[pos].genreName + " has tunes. Not deleted!",
+    });
   }
 
-
-  const ret = genres.slice(pos)
+  const ret = genres.slice(pos);
 
   res.status(200).json(ret);
 });
@@ -257,13 +257,13 @@ app.delete(API + V1 + "genres/:genreId", (req, res) => {
 
 //TODO eftir að klára
 app.get(API + V1 + "genres/:genreId/tunes/:tuneId", (req, res) => {
-  const { genreId, tuneId } = req.params
+  const { genreId, tuneId } = req.params;
 
-  tunes.forEach( (tune) => {
+  tunes.forEach((tune) => {
     if (tune.id == tuneId && tune.genreId == genreId) {
-      return res.status(200).json(tune)
+      return res.status(200).json(tune);
     }
-  })
+  });
 
   res.status(404).send("Message: Tune not found");
 });
