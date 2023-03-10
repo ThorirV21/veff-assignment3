@@ -69,8 +69,8 @@ const genres = [
 
 const API = "/api";
 const V1 = "/v1/";
-let tuneID = 2;
-let genreID = 2;
+//let tuneID = 2;
+//let genreID = 2;
 
 // Búinn / þarf að fara yfir
 //TODO Yfirfara og prófa
@@ -139,6 +139,8 @@ app.post(API + V1 + "tunes/:genreId", (req, res) => {
     return res.status(404).send("Genre does not exist");
   }
 
+  const tuneID = tunes.length;
+  
   tunes.push({
     id: tuneID.toString(),
     name: name,
@@ -146,14 +148,14 @@ app.post(API + V1 + "tunes/:genreId", (req, res) => {
     content: content,
   });
 
-  tuneID++;
+  
 
   res.status(200).json(tunes.at(-1));
 });
 
 //TODO Yfirfara og prófa
 // breyta öllu nema genre
-app.patch(API + V1 + "tunes/:tId/", (req, res) => {
+app.patch(API + V1 + "tunes/:tunesId/", (req, res) => {
   const { name, content } = req.body;
   const { tuneId } = req.params;
 
