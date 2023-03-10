@@ -202,7 +202,6 @@ app.get(API + V1 + "genres", (req, res) => {
   res.status(200).json(genres);
 });
 
-
 //TODO Yfirfara og prófa
 app.post(API + V1 + "genres", (req, res) => {
   //TODO create new genre
@@ -222,7 +221,7 @@ app.post(API + V1 + "genres", (req, res) => {
     id: genreID.toString(),
     genreName: genreName,
   });
-  genreID++
+  genreID++;
 
   res.status(201).json(genres.at(-1));
 });
@@ -231,28 +230,48 @@ app.post(API + V1 + "genres", (req, res) => {
 app.delete(API + V1 + "genres/:genreId", (req, res) => {
   //TODO delet genre if empty
 
+  const { genID } = req.params;
 
-  res.status(200).send("Delete genre");
+  let del = false;
+  tunes.forEach((tune) => {
+    if (tune.genreId == genID) {
+      del = true;
+    }
+  });
+  
+  const pos = genres.map(e => e.id).indexOf(genID)
+
+  console.log()
+
+  if (!del) {
+    return res.status(400).json({message: "Genre " + genres[pos].genreName + " has tunes. Not deleted!"})
+  }
+
+
+  const ret = genres.slice(pos)
+
+  res.status(200).json(ret);
 });
-
 
 // Endapunktar miðað við framenda
 
 //TODO eftir að klára
 app.get(API + V1 + "genres/:genreId/tunes/:tuneId", (req, res) => {
+  const { genreId, tuneId } = req.params
 
-  res.status(200).send("Do something")
+  tunes.forEach( (tune) => {
+    if (tune.id == tuneId && tune.genreId == genreId) {
+      return res.status(200).json(tune)
+    }
+  })
+
+  res.status(404).send("Message: Tune not found");
 });
-
 
 app.post(API + V1 + "genres/:genreId/tunes", (req, res) => {
   //TODO get something
-  res.status(200).send("create")
+  res.status(200).send("create");
 });
-
-
-
-
 
 // Allt annað
 app.use("*", (req, res) => {
