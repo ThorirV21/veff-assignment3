@@ -123,7 +123,7 @@ app.get(API + V1 + "tunes/:tuneId", (req, res) => {
   }
 });
 
-// Held að þessi sé klár
+// Held að þessi sé klár // Prófað Ottó sá ekkert athugavert.
 //TODO Yfirfara og prófa
 //3. Búðu til nýtt lag.
 app.post(API + V1 + "tunes/:genreId", (req, res) => {
@@ -156,10 +156,10 @@ app.post(API + V1 + "tunes/:genreId", (req, res) => {
   res.status(200).json(tunes.at(-1));
 });
 
-//TODO Yfirfara og prófa
+//TODO Yfirfara og prófa // Prófað og virkar - Ottó.
 // breyta öllu nema genre
 app.patch(API + V1 + "tunes/:tuneId/", (req, res) => {
-  const { name, content } = req.body;
+  const { name, content} = req.body;
   const { tuneId } = req.params;
 
   let tuneIndex;
@@ -183,6 +183,47 @@ app.patch(API + V1 + "tunes/:tuneId/", (req, res) => {
   if (name) {
     current.name = name;
   }
+
+  if (content && content.length > 0) {
+    current.content = content;
+  }
+
+  tunes[tuneIndex] = current;
+
+  res.status(200).json(tunes[tuneIndex]);
+});
+
+//alveg sama patch og fyrir ofan nema, GenreID er breytt af það er í URL. SKV VERKEFNALÝSINGU I THINK. Otto.
+app.patch(API + V1 + "tunes/:tuneId/:genreId", (req, res) => {
+  const { name, genreID, content } = req.body;
+  const { tuneId, genreId } = req.params;
+
+  let tuneIndex;
+
+  tunes.forEach((tune) => {
+    if (tune.id == tuneId) {
+      tuneIndex = tunes.indexOf(tune);
+    }
+  });
+
+  if (tuneIndex === undefined) {
+    return res.status(404).send("Message: Tune not found");
+  }
+
+  const current = tunes[tuneIndex];
+
+  if (!name && !content) {
+    return res.status(200).json(tunes[tuneIndex]);
+  }
+
+  if (name) {
+    current.name = name;
+  }
+
+  if(genreId){
+    current.genreId = genreID;
+  }
+
   if (content && content.length > 0) {
     current.content = content;
   }
@@ -194,12 +235,12 @@ app.patch(API + V1 + "tunes/:tuneId/", (req, res) => {
 
 //TODO eftir að gera, spurning hvort hægt sé að búa til function sem hægt er að nota í þessu falli og fallinu fyrir ofan
 
-app.patch(API + V1 + "tunes/:tuneId/:genreId", (req, res) => {
-  const { name, genreId, content } = req.body;
-  const { tuneId, genId } = req.params;
+// app.patch(API + V1 + "tunes/:tuneId/:genreId", (req, res) => {
+//   const { name, genreId, content } = req.body;
+//   const { tuneId, genId } = req.params;
 
-  res.status(200).send("update part of tune " + req.params.tuneId);
-});
+//   res.status(200).send("update part of tune " + req.params.tuneId);
+// });
 
 //TODO Yfirfara og prófa
 app.get(API + V1 + "genres", (req, res) => {
