@@ -69,11 +69,12 @@ const genres = [
 
 const API = "/api";
 const V1 = "/v1/";
-//let tuneID = 2;
-//let genreID = 2;
+let tuneID = tunes.length;
+let genreID = genres.length;
 
 // Búinn / þarf að fara yfir
-//TODO Yfirfara og prófa
+// TODO Yfirfara og prófa
+//1. Lestu öll lögin 
 app.get(API + V1 + "tunes", (req, res) => {
   const { name } = req.query;
   const display = tunes.map(({ id, name, genreId }) => ({ id, name, genreId }));
@@ -104,6 +105,7 @@ app.get(API + V1 + "tunes", (req, res) => {
 
 // Finished
 //TODO Yfirfara og prófa
+//2. Lesið einstakt lag.
 app.get(API + V1 + "tunes/:tuneId", (req, res) => {
   const { tuneId } = req.params;
   let ret;
@@ -123,6 +125,7 @@ app.get(API + V1 + "tunes/:tuneId", (req, res) => {
 
 // Held að þessi sé klár
 //TODO Yfirfara og prófa
+//3. Búðu til nýtt lag.
 app.post(API + V1 + "tunes/:genreId", (req, res) => {
   //TODO samkvæmt lýsingu á time breytan fyrir nótuna að vera INT
 
@@ -139,7 +142,6 @@ app.post(API + V1 + "tunes/:genreId", (req, res) => {
     return res.status(404).send("Genre does not exist");
   }
 
-  const tuneID = tunes.length;
   
   tunes.push({
     id: tuneID.toString(),
@@ -147,6 +149,7 @@ app.post(API + V1 + "tunes/:genreId", (req, res) => {
     genreId: genId,
     content: content,
   });
+  tuneID++;
 
   
 
@@ -155,6 +158,7 @@ app.post(API + V1 + "tunes/:genreId", (req, res) => {
 
 //TODO Yfirfara og prófa
 // breyta öllu nema genre
+//4.Uppfærðu lag ap hluta.
 app.patch(API + V1 + "tunes/:tunesId/", (req, res) => {
   const { name, content } = req.body;
   const { tuneId } = req.params;
