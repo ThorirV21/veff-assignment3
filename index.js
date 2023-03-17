@@ -103,32 +103,29 @@ app.get(API + V1 + "tunes", (req, res) => {
   res.status(200).json(display);
 });
 
-// Finished
-//TODO Yfirfara og prófa
-//2. Lesið einstakt lag.
-app.get(API + V1 + "tunes/:tuneId", (req, res) => {
-  const { tuneId } = req.params;
-  let ret;
+
+//TODO eftir að klára
+app.get(API + V1 + "genres/:genreId/tunes/:tuneId", (req, res) => {
+  const { genreId, tuneId } = req.params;
+
+  let found = false
 
   tunes.forEach((tune) => {
-    if (tune.id == tuneId) {
-      ret = tune;
+    if (tune.id == tuneId && tune.genreId == genreId) {
+      found = true
+      return res.status(200).json(tune);
     }
   });
-
-  if (ret) {
-    return res.status(200).json(ret);
-  } else {
-    res.status(404).send("Tune not found");
+  if (!found) {
+    res.status(404).send("Message: Tune not found");
   }
 });
+
 
 // Held að þessi sé klár // Prófað Ottó sá ekkert athugavert.
 //TODO Yfirfara og prófa
 //3. Búðu til nýtt lag.
-app.post(API + V1 + "tunes/:genreId", (req, res) => {
-  //TODO samkvæmt lýsingu á time breytan fyrir nótuna að vera INT
-
+app.post(API + V1 + "genres/:genreId/tunes", (req, res) => {
   const genId = req.params.genreId;
   const { name, content } = req.body;
 
@@ -138,63 +135,26 @@ app.post(API + V1 + "tunes/:genreId", (req, res) => {
       .send("Message: Name and none empty content are required in the body");
   }
 
+
   if (!genres.some((genre) => genre.id == genId)) {
-    return res.status(404).send("Genre does not exist");
+    return res.status(404).send("Message: Genre not found");
   }
 
-  
   tunes.push({
     id: tuneID.toString(),
     name: name,
     genreId: genId,
     content: content,
   });
+
   tuneID++;
 
-  
-
-  res.status(200).json(tunes.at(-1));
+  res.status(201).json(tunes.at(-1));
 });
 
-//TODO Yfirfara og prófa // Prófað og virkar - Ottó.
-// breyta öllu nema genre
-app.patch(API + V1 + "tunes/:tuneId/", (req, res) => {
-  const { name, content} = req.body;
-  const { tuneId } = req.params;
-
-  let tuneIndex;
-
-  tunes.forEach((tune) => {
-    if (tune.id == tuneId) {
-      tuneIndex = tunes.indexOf(tune);
-    }
-  });
-
-  if (tuneIndex === undefined) {
-    return res.status(404).send("Message: Tune not found");
-  }
-
-  const current = tunes[tuneIndex];
-
-  if (!name && !content) {
-    return res.status(200).json(tunes[tuneIndex]);
-  }
-
-  if (name) {
-    current.name = name;
-  }
-
-  if (content && content.length > 0) {
-    current.content = content;
-  }
-
-  tunes[tuneIndex] = current;
-
-  res.status(200).json(tunes[tuneIndex]);
-});
 
 //alveg sama patch og fyrir ofan nema, GenreID er breytt af það er í URL. SKV VERKEFNALÝSINGU I THINK. Otto.
-app.patch(API + V1 + "tunes/:tuneId/:genreID", (req, res) => {
+app.patch(API + V1 + "genres/:genreId/tunes/:tuneId", (req, res) => {
   const { name, genreId, content } = req.body;
   const { tuneId, genreID } = req.params;
 
@@ -213,7 +173,7 @@ app.patch(API + V1 + "tunes/:tuneId/:genreID", (req, res) => {
   const current = tunes[tuneIndex];
 
   if (!name && !content && ! genreId) {
-    return res.status(201).json(tunes[tuneIndex]);
+    return res.status(204).json(tunes[tuneIndex]); // 204 because of no changes
   }
 
   if (name) {
@@ -293,54 +253,6 @@ app.delete(API + V1 + "genres/:genreId", (req, res) => {
   res.status(200).json(ret);
 });
 
-// Endapunktar miðað við framenda
-
-//TODO eftir að klára
-app.get(API + V1 + "genres/:genreId/tunes/:tuneId", (req, res) => {
-  const { genreId, tuneId } = req.params;
-
-  let found = false
-
-  tunes.forEach((tune) => {
-    if (tune.id == tuneId && tune.genreId == genreId) {
-      found = true
-      return res.status(200).json(tune);
-    }
-  });
-  if (!found) {
-    res.status(404).send("Message: Tune not found");
-  }
-});
-
-app.post(API + V1 + "genres/:genreId/tunes", (req, res) => {
-  const genId = req.params.genreId;
-  const { name, content } = req.body;
-
-  if (!name || !content || !content.length) {
-    return res
-      .status(400)
-      .send("Message: Name and none empty content are required in the body");
-  }
-
-  if (!(genres.map((e) => e.id).includes(genId.toString()))){
-    return res.status(404).send("Message: Genre not found")
-  }
-
-  if (!genres.some((genre) => genre.id == genId)) {
-    return res.status(404).send("Genre does not exist");
-  }
-
-  tunes.push({
-    id: tuneID.toString(),
-    name: name,
-    genreId: genId,
-    content: content,
-  });
-
-  tuneID++;
-
-  res.status(200).json(tunes.at(-1));
-});
 
 // Allt annað
 app.use("*", (req, res) => {
