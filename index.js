@@ -76,13 +76,13 @@ let genreID = genres.length;
 // TODO Yfirfara og prófa
 //1. Lestu öll lögin 
 app.get(API + V1 + "tunes", (req, res) => {
-  const { name } = req.query;
+  const { genreName } = req.query;
   const display = tunes.map(({ id, name, genreId }) => ({ id, name, genreId }));
   let genId;
 
-  if (name) {
+  if (genreName) {
     genres.forEach((genre) => {
-      if (genre.genreName.toLowerCase() == name.toLowerCase()) {
+      if (genre.genreName.toLowerCase() == genreName.toLowerCase()) {
         genId = genre.id;
       }
     });
@@ -194,9 +194,9 @@ app.patch(API + V1 + "tunes/:tuneId/", (req, res) => {
 });
 
 //alveg sama patch og fyrir ofan nema, GenreID er breytt af það er í URL. SKV VERKEFNALÝSINGU I THINK. Otto.
-app.patch(API + V1 + "tunes/:tuneId/:genreId", (req, res) => {
-  const { name, genreID, content } = req.body;
-  const { tuneId, genreId } = req.params;
+app.patch(API + V1 + "tunes/:tuneId/:genreID", (req, res) => {
+  const { name, genreId, content } = req.body;
+  const { tuneId, genreID } = req.params;
 
   let tuneIndex;
 
@@ -212,17 +212,19 @@ app.patch(API + V1 + "tunes/:tuneId/:genreId", (req, res) => {
 
   const current = tunes[tuneIndex];
 
-  if (!name && !content) {
-    return res.status(200).json(tunes[tuneIndex]);
+  if (!name && !content && ! genreId) {
+    return res.status(201).json(tunes[tuneIndex]);
   }
 
   if (name) {
     current.name = name;
   }
 
-  if(genreId){
-    current.genreId = genreID;
+  if(genreId && !(genreId === genreID)){
+    current.genreId = genreId;
   }
+
+  console.log(current)
 
   if (content && content.length > 0) {
     current.content = content;
@@ -233,14 +235,6 @@ app.patch(API + V1 + "tunes/:tuneId/:genreId", (req, res) => {
   res.status(200).json(tunes[tuneIndex]);
 });
 
-//TODO eftir að gera, spurning hvort hægt sé að búa til function sem hægt er að nota í þessu falli og fallinu fyrir ofan
-
-// app.patch(API + V1 + "tunes/:tuneId/:genreId", (req, res) => {
-//   const { name, genreId, content } = req.body;
-//   const { tuneId, genId } = req.params;
-
-//   res.status(200).send("update part of tune " + req.params.tuneId);
-// });
 
 //TODO Yfirfara og prófa
 app.get(API + V1 + "genres", (req, res) => {
