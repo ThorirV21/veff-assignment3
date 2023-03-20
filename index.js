@@ -72,9 +72,7 @@ const V1 = "/v1/";
 let tuneID = tunes.length;
 let genreID = genres.length;
 
-// Búinn / þarf að fara yfir
-// TODO Yfirfara og prófa
-//1. Lestu öll lögin 
+
 app.get(API + V1 + "tunes", (req, res) => {
   const { genreName } = req.query;
   const display = tunes.map(({ id, name, genreId }) => ({ id, name, genreId }));
@@ -104,7 +102,6 @@ app.get(API + V1 + "tunes", (req, res) => {
 });
 
 
-//TODO eftir að klára
 app.get(API + V1 + "genres/:genreId/tunes/:tuneId", (req, res) => {
   const { genreId, tuneId } = req.params;
 
@@ -122,9 +119,6 @@ app.get(API + V1 + "genres/:genreId/tunes/:tuneId", (req, res) => {
 });
 
 
-// Held að þessi sé klár // Prófað Ottó sá ekkert athugavert.
-//TODO Yfirfara og prófa
-//3. Búðu til nýtt lag.
 app.post(API + V1 + "genres/:genreId/tunes", (req, res) => {
   const genId = req.params.genreId;
   const { name, content } = req.body;
@@ -153,7 +147,6 @@ app.post(API + V1 + "genres/:genreId/tunes", (req, res) => {
 });
 
 
-//alveg sama patch og fyrir ofan nema, GenreID er breytt af það er í URL. SKV VERKEFNALÝSINGU I THINK. Otto.
 app.patch(API + V1 + "genres/:genreId/tunes/:tuneId", (req, res) => {
   const { name, genreId, content } = req.body;
   const { tuneId, genreID } = req.params;
@@ -196,13 +189,12 @@ app.patch(API + V1 + "genres/:genreId/tunes/:tuneId", (req, res) => {
 });
 
 
-//TODO Yfirfara og prófa
 app.get(API + V1 + "genres", (req, res) => {
   //TODO create
   res.status(200).json(genres);
 });
 
-//TODO Yfirfara og prófa
+
 app.post(API + V1 + "genres", (req, res) => {
   //TODO create new genre
   const { genreName } = req.body;
@@ -226,7 +218,7 @@ app.post(API + V1 + "genres", (req, res) => {
   res.status(201).json(genres.at(-1));
 });
 
-//TODO Yfirfara og prófa
+
 app.delete(API + V1 + "genres/:genreId", (req, res) => {
   const { genreId } = req.params;
 
@@ -254,9 +246,9 @@ app.delete(API + V1 + "genres/:genreId", (req, res) => {
 });
 
 
-// Allt annað
+
 app.use("*", (req, res) => {
-  res.status(405).send("Operation not supported.");
+  res.status(405).send("Message: Operation not supported.");
 });
 
 //Start the server
